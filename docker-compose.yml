@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      target: production
+    container_name: ekko_api
+    ports:
+      - '${PORT}:${PORT}'
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - DB_HOST=postgres
+      - REDIS_HOST=redis
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ekko_network
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:${PORT}/health']
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: ekko_postgres
+    ports:
+      - '${DB_PORT}:5432'
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_INITDB_ARGS: '--auth-host=scram-sha-256'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ekko_network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME} -d ${DB_NAME}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: ekko_redis
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    ports:
+      - '${REDIS_PORT}:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - ekko_network
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: ekko_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    ports:
+      - '${PGADMIN_PORT}:80'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ekko_network
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    name: ekko_postgres_data
+  pgadmin_data:
+    name: ekko_pgadmin_data
+  redis_data:
+    name: ekko_redis_data
+
+networks:
+  ekko_network:
+    name: ekko_network
+    driver: bridge

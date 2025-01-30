@@ -1,0 +1,32 @@
+erDiagram
+    User ||--o{ Structure : "belongs_to"
+    Structure ||--o{ Structure : "has_parent"
+    Structure ||--o{ User : "contains"
+
+    User {
+        uuid id PK
+        string email UK
+        string firstName
+        string lastName
+        string password
+        enum role
+        uuid structureId FK
+        boolean isActive
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    Structure {
+        uuid id PK
+        string name
+        string level
+        uuid parentId FK
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    StructureClosureTable {
+        uuid id_ancestor FK
+        uuid id_descendant FK
+        int depth
+    } 

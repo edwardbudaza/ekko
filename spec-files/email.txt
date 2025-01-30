@@ -1,0 +1,16 @@
+Good morning Edward,
+
+I really appreciate the pace and structure you've brought to this assessment. Your planned approach is well thought out, and it’s great to see your strategic breakdown of the implementation.
+
+I’d suggest using NestJS as your framework of choice if possible, along with TypeORM instead of Prisma, as it aligns better with our tech stack.
+
+As you work through the assessment, I encourage you to identify and document key pain points that arise during implementation, particularly around scalability, role management, and performance. Understanding these challenges, how you approached solving them, and what improvements you would make will be just as important as the final implementation itself.
+
+There’s no need for daily updates, just let us know when you’re ready, and we can set up a call to walk through your solution and discuss your approach.
+
+Since this is primarily a backend role, I recommend focusing on Step 1 of your implementation approach, Database & Backend. For Step 3, it would be valuable to discuss your thoughts on performance optimizations and deployment strategy, even if you don’t implement them fully.
+
+Looking forward to seeing your work. Let us know if you have any questions!
+
+Best regards,
+Ryan

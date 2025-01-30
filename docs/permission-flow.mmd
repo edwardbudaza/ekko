@@ -1,0 +1,36 @@
+sequenceDiagram
+    participant C as Client
+    participant G as JWT Guard
+    participant R as Roles Guard
+    participant S as Structure Guard
+    participant U as Users Service
+    participant St as Structures Service
+    participant Ca as Cache
+    participant DB as Database
+
+    C->>+G: Request with JWT
+    G->>G: Validate Token
+    G->>+U: Get User
+    U->>+DB: Query User
+    DB-->>-U: User Data
+    U-->>-G: User Object
+    G-->>-C: 401 if Invalid
+
+    C->>+R: Authorized Request
+    R->>R: Check Role Permission
+    R-->>C: 403 if Invalid Role
+
+    C->>+S: Role Authorized Request
+    S->>+St: Get User Structure
+    St->>+Ca: Check Cache
+    Ca-->>-St: Cache Miss
+    St->>+DB: Query Structure
+    DB-->>-St: Structure Data
+    St-->>-S: Structure Access
+    S->>S: Validate Structure Access
+    S-->>-C: 403 if Invalid Access
+
+    C->>+U: Authorized Request
+    U->>+Ca: Check Cache
+    Ca-->>-U: Cached Data
+    U-->>-C: Response 
