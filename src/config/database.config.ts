@@ -1,25 +1,17 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import * as dotenv from 'dotenv';
+import { config } from 'dotenv';
 
-dotenv.config();
-
-const {
-  DB_HOST = 'localhost',
-  DB_PORT = '5433',
-  DB_USERNAME = 'postgres',
-  DB_PASSWORD = 'changeme',
-  DB_NAME = 'ekko_challenge',
-  NODE_ENV = 'development',
-} = process.env;
+config();
 
 export const databaseConfig: TypeOrmModuleOptions = {
   type: 'postgres',
-  host: DB_HOST,
-  port: parseInt(DB_PORT, 10),
-  username: DB_USERNAME,
-  password: DB_PASSWORD,
-  database: DB_NAME,
-  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-  synchronize: NODE_ENV !== 'production',
-  logging: NODE_ENV !== 'production',
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT, 10) || 5432,
+  username: process.env.DB_USERNAME || 'postgres',
+  password: process.env.DB_PASSWORD || 'postgres123',
+  database: process.env.DB_DATABASE || 'ekko',
+  entities: ['dist/**/*.entity{.ts,.js}'],
+  autoLoadEntities: true,
+  synchronize: process.env.NODE_ENV !== 'production',
+  logging: process.env.NODE_ENV !== 'production',
 };

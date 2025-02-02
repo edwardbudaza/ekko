@@ -5,16 +5,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
   JoinColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Structure } from '../../structures/entities/structure.entity';
-
-export enum UserRole {
-  NATIONAL = 'national',
-  CITY = 'city',
-  SUBURB = 'suburb',
-}
+import { UserRole } from '../enums/user-role.enum';
+import { Permission } from '../../permissions/entities/permission.entity';
 
 @Entity('users')
 export class User {
@@ -50,6 +47,12 @@ export class User {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @OneToMany(() => Permission, (permission) => permission.user, {
+    cascade: true,
+    eager: true,
+  })
+  permissions: Permission[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -1,18 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import {
-  HealthIndicator,
-  HealthIndicatorResult,
-  HealthCheckError,
-} from '@nestjs/terminus';
+import { HealthCheckService, HealthIndicatorResult } from '@nestjs/terminus';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { Inject } from '@nestjs/common';
 
 @Injectable()
-export class RedisHealthIndicator extends HealthIndicator {
-  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {
-    super();
-  }
+export class RedisHealthIndicator {
+  constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private health: HealthCheckService,
+  ) {}
 
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
     try {
@@ -23,12 +20,18 @@ export class RedisHealthIndicator extends HealthIndicator {
         throw new Error('Cache is not working properly');
       }
 
-      return this.getStatus(key, true);
+      return {
+        [key]: {
+          status: 'up',
+        },
+      };
     } catch (error) {
-      throw new HealthCheckError(
-        'Redis health check failed',
-        this.getStatus(key, false),
-      );
+      return {
+        [key]: {
+          status: 'down',
+          message: 'Redis health check failed',
+        },
+      };
     }
   }
 }
