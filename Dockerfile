@@ -1,11 +1,11 @@
-# Build Stage
+# Build stage
 FROM node:18-alpine AS builder
 
+# Set working directory
 WORKDIR /app
 
-# Copy package files
+# Add package files
 COPY package*.json ./
-COPY tsconfig*.json ./
 
 # Install dependencies
 RUN npm ci
@@ -16,36 +16,40 @@ COPY . .
 # Build application
 RUN npm run build
 
-# Production Stage
+# Production stage
 FROM node:18-alpine AS production
 
-# Install curl for healthcheck
-RUN apk add --no-cache curl
-
+# Set working directory
 WORKDIR /app
+
+# Add non-root user
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+# Set environment variables
+ENV NODE_ENV=production
 
 # Copy package files and install production dependencies
 COPY package*.json ./
 RUN npm ci --only=production
 
-# Copy built application
+# Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/tsconfig*.json ./
 
-# Copy environment file example
-COPY .env.example .env
+# Copy necessary configuration files
+COPY --from=builder /app/nest-cli.json .
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nestjs -u 1001 && \
-    chown -R nestjs:nodejs /app
+# Set ownership to non-root user
+RUN chown -R appuser:appgroup /app
 
-USER nestjs
+# Switch to non-root user
+USER appuser
+
+# Expose application port
+EXPOSE 3000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s \
-  CMD curl -f http://localhost:${PORT}/health || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
 
-EXPOSE ${PORT}
-
-CMD ["node", "dist/main"] 
+# Start application
+CMD ["npm", "run", "start:prod"] 

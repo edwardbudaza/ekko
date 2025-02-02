@@ -1,4 +1,66 @@
-WelcometotheFSChallenge.Thepurposeofthischallengeistocreateamorereal-worldenvironmentwherewecanevaluatehowyouapproachcomplexproblems,manageconstraintsandcommunicatethroughoutthisprocess.🌿Ourmaingoalhereistosimplyseehowyoucodeandwhatyoucando.Pleasenotethatthisiscalleda"Challenge"forareasonandbynomeansistheexpectationthatyoushouldcompleteeverythinginthesettimeframe.Wewanttogaininsightintohowyoucommunicatewithusduringtheprocess,howyouprioritise,andhowyouapproachproblems.Andmostofallwewanttoseethosewell-thought-outlinesofcode.Soplaytoyourstrengths,jotdownyourapproachifyoudon’tgettoeverythingandhavefunbuildingsomethingthatexcitesyou.Feelfreetoreachoutoveremailforanyquestionsorhelpto:andRyan RichardEtienne SmithNote:Sincemostofourrecruitshaveafull-timejob,we’vescheduledthischallengetorunovertheweekendtogiveyoumoreflexibilityastowhenandhowyouworkonthis.Ourhopeisthatthiswillremovesomepressuretobalancerecruitmentrequirementsandcurrentjobdeadlines.EnviroconomyLtdT/Aekko|CompanyNo:12338538hello@ekko.earth|ekkoHQ|X+WhyTheFulwood|4FulwoodPl,LondonWC1V6HG
-OverviewYourchallengeistodevelopasystemthatfacilitateshierarchicalrole-basedpermissionmanagement,allowinggroupsofuserstoaccessotherusers'informationbasedontheirroleswithintheorganisation.Thissystemshouldnotonlyenforcesecurityandprivacybydesignbutalsoenhancecollaborationacrossdifferentlevelsoftheorganisationalstructure.Thesolutionshouldreflectadeepunderstandingofhierarchicaldatarepresentationandaccesscontrolmechanisms,embodyingourcommitmenttocreatingimpactful,secure,anduser-centredsoftwaresolutions.Itisessentialthatthisapplicationisintuitive,scalable,andmaintainshighperformanceunderincreasingloads,reflectingourdedicationtoqualityandinnovationYourapplicationwillbereviewedinthefollowingareas:●OverallStructureandBestPractises●PlanningandThoughtProcess●TechnicalProficiency&Innovation-useofTypeScript●DatabaseDesign&Integration●APIDesignandBusinessLogicImplementation●Front-EndDevelopmentandUserExperience●Testing&Documentation●Reusability●Scalability&Performance●Presentation&FeedbackSomespecificthingsthatwearelookingfor:●Abilitytosetupdatabaseconnections●Abilitytocreaterelevantdatatables●AbilitytoCRUDdatatables●AbilitytointerfacewiththedatabasethroughGraphQLorRESTendpoints●Applybusinesslogictoinputsandresults●Querystructureandefficiency●TheoverallapproachtobuildingapackageforanAPI●UseTypeScript&Node●Testingwhererelevant●Front-endtoolslikeTailwind,andShadcnUItoassistwiththeinterfaceareencouraged●WhereChatGPTorotherAi/LLMmodelshavebeenused,pleasenoteGoalsEnviroconomyLtdT/Aekko|CompanyNo:12338538hello@ekko.earth|ekkoHQ|X+WhyTheFulwood|4FulwoodPl,LondonWC1V6HG
-●Youshouldrunthislocally●Youshouldbeabletoaddpermissionsstructuresandassignpermissionstoauser●AUsershouldbeabletoqueryotherusersbasedontheirpermissionstructure●AUsershouldhaveaccesstoallother"downstream"usersintheirpermissionsstructure●Userscanhavemultiplepermissionsassigned●Youshouldbeabletoexplainyourthoughtprocess(recording,overview,presentation)🌿BONUS:Thisapplicationneedstoscaleto100000usersaday.Select&Deployanapponaplatformofyourchoicethatwillallowyoutoscalequickly.EnviroconomyLtdT/Aekko|CompanyNo:12338538hello@ekko.earth|ekkoHQ|X+WhyTheFulwood|4FulwoodPl,LondonWC1V6HG
-UnsetSpecificationsData:Userid:IDname:StringstructureId://lowestlevel(egsuburbIdintheexamplebelow)ExampleofrolesQueryExamplesUsingtheexamplehierarchy●ANationalrolecanqueryusersinallCitiesandSuburbs●ACityrolecanqueryusersonlytheirCityandSuburbs●ASuburbrolecanqueryusersinonlytheirSuburb●TherearemanyNationalroles●EachNationalrolehasmultipleCities●EachCityrolehasmultipleSuburbs●Therolesshouldnotbepre-definedandaddingadditionallevelsshouldalsobeconsidered
+Welcome to the FS Challenge.
+The purpose of this challenge is to create a more real-world environment where we can
+evaluate how you approach complex problems, manage constraints and communicate
+throughout this process.
+🌿 Our main goal here is to simply see how you code and what you can do. Please note that
+this is called a "Challenge" for a reason and by no means is the expectation that you should
+complete everything in the set time frame.
+We want to gain insight into how you communicate with us during the process, how you
+prioritise, and how you approach problems. And most of all we want to see those
+well-thought-out lines of code. So play to your strengths, jot down your approach if you don’t
+get to everything and have fun building something that excites you.
+Feel free to reach out over email for any questions or help to: Ryan Richard and
+Etienne Smith
+Note: Since most of our recruits have a full-time job, we’ve scheduled this challenge to run
+over the weekend to give you more flexibility as to when and how you work on this. Our hope
+is that this will remove some pressure to balance recruitment requirements and current job
+deadlines.
+Enviroconomy Ltd T/A ekko | Company No: 12338538
+hello@ekko.earth | ekko HQ | X + Why The Fulwood | 4 Fulwood Pl, London WC1V 6HG
+Overview
+Your challenge is to develop a system that facilitates hierarchical role-based permission
+management, allowing groups of users to access other users' information based on their
+roles within the organisation. This system should not only enforce security and privacy by
+design but also enhance collaboration across different levels of the organisational structure.
+The solution should reflect a deep understanding of hierarchical data representation and
+access control mechanisms, embodying our commitment to creating impactful, secure, and
+user-centred software solutions. It is essential that this application is intuitive, scalable, and
+maintains high performance under increasing loads, reflecting our dedication to quality and
+innovation
+Your application will be reviewed in the following areas:
+● Overall Structure and Best Practises
+● Planning and Thought Process
+● Technical Proficiency & Innovation - use of TypeScript
+● Database Design & Integration
+● API Design and Business Logic Implementation
+● Front-End Development and User Experience
+● Testing & Documentation
+● Reusability
+● Scalability & Performance
+● Presentation & Feedback
+Some specific things that we are looking for:
+● Ability to set up database connections
+● Ability to create relevant data tables
+● Ability to CRUD data tables
+● Ability to interface with the database through GraphQL or REST endpoints
+● Apply business logic to inputs and results
+● Query structure and efficiency
+● The overall approach to building a package for an API
+● Use TypeScript & Node
+● Testing where relevant
+● Front-end tools like Tailwind, and Shadcn UI to assist with the interface are
+encouraged
+● Where ChatGPT or other Ai/LLM models have been used, please note
+Goals
+Enviroconomy Ltd T/A ekko | Company No: 12338538
+hello@ekko.earth | ekko HQ | X + Why The Fulwood | 4 Fulwood Pl, London WC1V 6HG
+● You should run this locally
+● You should be able to add permissions structures and assign permissions to a user
+● A User should be able to query other users based on their permission structure
+● A User should have access to all other "downstream" users in their permissions
+structure
+● Users can have multiple permissions assigned
+● You should be able to explain your thought process (recording, overview,
+presentation)
+🌿 BONUS: This application needs to scale to 100000 users a day. Select & Deploy an app
+on a platform of your choice that will allow you to scale quickl

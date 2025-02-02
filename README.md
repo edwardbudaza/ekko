@@ -2,7 +2,9 @@
 
 ## Overview
 
-A NestJS application implementing hierarchical role-based permission management, allowing groups of users to access other users' information based on their roles within the organization.
+A NestJS application implementing hierarchical role-based permission management, allowing groups of users to access other users' information based on their roles and permissions within the organization.
+
+For a detailed step-by-step guide on how to build this project from scratch, see our [Tutorial](docs/TUTORIAL.md).
 
 ## Architecture Decisions
 
@@ -11,9 +13,10 @@ A NestJS application implementing hierarchical role-based permission management,
 - **Framework**: NestJS with TypeScript
 - **Database**: PostgreSQL with TypeORM
 - **Authentication**: JWT with Passport
-- **Caching**: In-memory cache with @nestjs/cache-manager
-- **API Style**: REST
+- **Caching**: Redis with @nestjs/cache-manager
+- **API Style**: REST with Swagger/OpenAPI
 - **Container**: Docker with docker-compose
+- **Monitoring**: Prometheus metrics for cache and performance
 
 ### Key Design Patterns
 
@@ -22,10 +25,12 @@ A NestJS application implementing hierarchical role-based permission management,
 3. **Guard Pattern**: For authentication and authorization
 4. **Decorator Pattern**: For role-based access control
 5. **Tree Structure**: Using closure table pattern for hierarchical data
+6. **Cache-Aside Pattern**: For efficient data caching
 
 ### Database Design
 
 - Hierarchical structure using closure table pattern
+- Granular permission system with user-structure relationships
 - Optimized queries for ancestor/descendant lookups
 - Proper indexing for performance
 - Soft delete for data retention
@@ -37,6 +42,7 @@ A NestJS application implementing hierarchical role-based permission management,
 - Node.js (v16+)
 - Docker and Docker Compose
 - PostgreSQL (if running locally)
+- Redis (if running locally)
 
 ### Environment Setup
 
@@ -52,20 +58,26 @@ cp .env.example .env
 ### Running with Docker
 
 ```bash
-# Start PostgreSQL and pgAdmin
+# Start PostgreSQL, Redis, and pgAdmin
 docker-compose up -d
 
 # Install dependencies
 npm install
 
+# Run database migrations
+npm run migration:run
+
 # Start application in development mode
 npm run start:dev
 ```
 
-### Database Access
+### Service Access
 
+- Application: http://localhost:3000
+- Swagger UI: http://localhost:3000/api
 - PostgreSQL: localhost:5433
 - pgAdmin: localhost:5050
+- Redis: localhost:6379
 
 ## API Documentation
 
@@ -109,6 +121,24 @@ GET /structures
 
 # Get structure descendants
 GET /structures/:id/descendants
+
+# Get structure permissions
+GET /structures/:id/permissions
+```
+
+### Permission Management
+
+```http
+# Grant permission
+POST /permissions
+{
+  "userId": "uuid",
+  "structureId": "uuid",
+  "metadata": {}
+}
+
+# Revoke permission
+DELETE /permissions/:id
 ```
 
 ## Testing
@@ -128,26 +158,31 @@ npm run test:cov
 
 - JWT-based authentication
 - Role-based access control
+- Granular permission system
 - Password hashing with bcrypt
 - Request validation
 - Rate limiting
 - Environment variable protection
+- CORS configuration
 
 ## Performance Optimizations
 
+- Redis caching with @nestjs/cache-manager
 - Database query optimization
-- Response caching
 - Proper indexing
 - Connection pooling
 - Tree structure optimization
+- Cache invalidation strategies
+- Performance monitoring metrics
 
 ## Health Checks
 
-The application includes comprehensive health monitoring following SOLID principles:
+The application includes comprehensive health monitoring:
 
 ### Endpoints
 
-- `GET /health`: Returns the overall health status of the application
+- `GET /health`: Returns the overall health status
+- `GET /metrics`: Returns Prometheus metrics
 
 ### Monitored Services
 
@@ -155,6 +190,8 @@ The application includes comprehensive health monitoring following SOLID princip
 - Redis cache
 - System memory usage
 - Disk storage
+- Cache hit rates
+- Query performance
 
 ### Architecture
 
@@ -173,15 +210,15 @@ Health check thresholds can be configured via environment variables:
 ```env
 MEMORY_HEAP_LIMIT_MB=150
 DISK_THRESHOLD_PERCENT=0.9
+REDIS_TTL=3600
 ```
 
-### Testing
+### Monitoring
 
-Comprehensive test suite includes:
-
-- Unit tests for health indicators
-- Integration tests for the health service
-- E2E tests for the health endpoint
+- Cache hit/miss metrics
+- Query duration histograms
+- Memory usage tracking
+- Error rate monitoring
 
 ## Contributing
 
