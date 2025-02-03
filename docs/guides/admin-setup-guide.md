@@ -3,8 +3,8 @@
 ## Prerequisites
 
 - Postman installed
-- Application running on `http://localhost:8080`
-- Swagger documentation available at `http://localhost:8080/api`
+- Application running on `http://localhost:3000`
+- Swagger documentation available at `http://localhost:3000/api`
 
 ## Step 1: Set Up Postman Environment
 
@@ -13,7 +13,7 @@
    - Name it "Ekko Local"
    - Add these variables:
      ```
-     baseUrl: http://localhost:8080/v1
+     baseUrl: http://localhost:3000/v1
      adminToken: [leave empty for now]
      adminUserId: [leave empty for now]
      structureId: [leave empty for now]

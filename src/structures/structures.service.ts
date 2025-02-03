@@ -164,7 +164,7 @@ export class StructuresService {
 
   private async clearStructureCache(): Promise<void> {
     await this.cacheManager.del('all_structures');
-    // You might want to implement more sophisticated cache clearing
-    // based on your specific needs
+    // TODO: implement more robust cache clearing
+    // based on specific needs
   }
 }

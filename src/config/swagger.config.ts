@@ -26,7 +26,7 @@ export function setupSwagger(app: INestApplication): void {
     .addServer(
       process.env.NODE_ENV === 'production'
         ? 'https://api.yourserver.com' // TODO: Change to actual server
-        : 'http://localhost:3000',
+        : `http://localhost:${process.env.PORT}`,
       process.env.NODE_ENV === 'production' ? 'Production' : 'Development',
     )
     .build();
