@@ -273,6 +273,30 @@ describe('UsersService', () => {
         true,
       );
     });
+
+    it('should update admin user with structure ID', async () => {
+      const adminUser = {
+        id: '382f3b2f-f1ba-47b2-85ab-1d353e33cf09',
+        email: 'g09b5546@gmail.com',
+        role: UserRole.ADMIN,
+        structureId: null,
+      };
+
+      const updateDto = {
+        structureId: 'national-structure-id',
+      };
+
+      mockUserRepository.findOne.mockResolvedValue(adminUser);
+      mockUserRepository.save.mockResolvedValue({ ...adminUser, ...updateDto });
+
+      const result = await service.update(adminUser.id, updateDto);
+
+      expect(result.structureId).toBe(updateDto.structureId);
+      expect(mockUserRepository.save).toHaveBeenCalledWith({
+        ...adminUser,
+        ...updateDto,
+      });
+    });
   });
 
   describe('remove', () => {
@@ -365,6 +389,19 @@ describe('UsersService', () => {
       const result = await service.canAccessUser('1', '2');
 
       expect(result).toBe(false);
+    });
+
+    it('should allow admin to access any user', async () => {
+      const adminUser = {
+        id: '382f3b2f-f1ba-47b2-85ab-1d353e33cf09',
+        role: UserRole.ADMIN,
+      };
+
+      mockUserRepository.findOne.mockResolvedValue(adminUser);
+
+      const result = await service.canAccessUser(adminUser.id, 'any-user-id');
+
+      expect(result).toBe(true);
     });
   });
 

@@ -26,7 +26,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @Roles(UserRole.NATIONAL)
+  @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
@@ -34,14 +34,15 @@ export class UsersController {
 
   @Get()
   async findAll(@Request() req) {
-    const currentUserId = req.user.id;
-    return this.usersService.findAll(currentUserId);
+    return this.usersService.findAll(req.user.id);
   }
 
   @Get(':id')
   async findOne(@Request() req, @Param('id') id: string) {
-    const currentUserId = req.user.id;
-    const canAccess = await this.usersService.canAccessUser(currentUserId, id);
+    if (req.user.role === UserRole.ADMIN) {
+      return this.usersService.findOne(id);
+    }
+    const canAccess = await this.usersService.canAccessUser(req.user.id, id);
     if (!canAccess) {
       throw new ForbiddenException(
         'You do not have permission to access this user',
@@ -56,27 +57,28 @@ export class UsersController {
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    const currentUserId = req.user.id;
-    const canAccess = await this.usersService.canAccessUser(currentUserId, id);
-    if (!canAccess) {
-      throw new ForbiddenException(
-        'You do not have permission to modify this user',
-      );
+    // Admin can update any user
+    if (req.user.role === UserRole.ADMIN) {
+      return this.usersService.update(id, updateUserDto);
     }
+
+    // Non-admin users can only update themselves
+    if (req.user.id !== id) {
+      throw new ForbiddenException('You can only update your own profile');
+    }
+
+    // Non-admin users cannot update their role or structureId
+    if (updateUserDto.role || updateUserDto.structureId) {
+      throw new ForbiddenException('You cannot update role or structure');
+    }
+
     return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  @Roles(UserRole.NATIONAL)
+  @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Request() req, @Param('id') id: string) {
-    const currentUserId = req.user.id;
-    const canAccess = await this.usersService.canAccessUser(currentUserId, id);
-    if (!canAccess) {
-      throw new ForbiddenException(
-        'You do not have permission to delete this user',
-      );
-    }
+  remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }
 }

@@ -41,6 +41,7 @@ export class UsersService {
       createUserDto.password,
       this.SALT_ROUNDS,
     );
+
     const user = this.usersRepository.create({
       ...createUserDto,
       password: hashedPassword,
@@ -52,15 +53,18 @@ export class UsersService {
   }
 
   async findAll(currentUserId: string): Promise<User[]> {
-    const cacheKey = `users_accessible_${currentUserId}`;
-    const cached = await this.cacheManager.get<User[]>(cacheKey);
-    if (cached) {
-      return cached;
+    const currentUser = await this.findOne(currentUserId);
+
+    // Admin can see all users
+    if (currentUser.role === UserRole.ADMIN) {
+      return this.usersRepository.find({
+        relations: ['structure'],
+      });
     }
 
-    const currentUser = await this.findOne(currentUserId);
+    // If user has no structure, they can only see themselves
     if (!currentUser.structureId) {
-      throw new ForbiddenException('User has no assigned structure');
+      return [currentUser];
     }
 
     const accessibleStructures =
@@ -71,66 +75,37 @@ export class UsersService {
 
     const structureIds = accessibleStructures.map((structure) => structure.id);
 
-    const users = await this.usersRepository.find({
+    return this.usersRepository.find({
       where: {
         structureId: In(structureIds),
       },
-      relations: ['structure', 'permissions'],
-      cache: {
-        id: cacheKey,
-        milliseconds: this.CACHE_TTL * 1000,
-      },
+      relations: ['structure'],
     });
-
-    await this.cacheManager.set(cacheKey, users, this.CACHE_TTL);
-    return users;
   }
 
   async findOne(id: string): Promise<User> {
-    const cacheKey = `user_${id}`;
-    const cached = await this.cacheManager.get<User>(cacheKey);
-    if (cached) {
-      return cached;
-    }
-
     const user = await this.usersRepository.findOne({
       where: { id },
-      relations: ['structure', 'permissions'],
-      cache: {
-        id: cacheKey,
-        milliseconds: this.CACHE_TTL * 1000,
-      },
+      relations: ['structure'],
     });
 
     if (!user) {
       throw new NotFoundException(`User with ID "${id}" not found`);
     }
 
-    await this.cacheManager.set(cacheKey, user, this.CACHE_TTL);
     return user;
   }
 
   async findByEmail(email: string): Promise<User> {
-    const cacheKey = `user_email_${email}`;
-    const cached = await this.cacheManager.get<User>(cacheKey);
-    if (cached) {
-      return cached;
-    }
-
     const user = await this.usersRepository.findOne({
       where: { email },
-      relations: ['structure', 'permissions'],
-      cache: {
-        id: cacheKey,
-        milliseconds: this.CACHE_TTL * 1000,
-      },
+      relations: ['structure'],
     });
 
     if (!user) {
       throw new NotFoundException(`User with email "${email}" not found`);
     }
 
-    await this.cacheManager.set(cacheKey, user, this.CACHE_TTL);
     return user;
   }
 
@@ -160,17 +135,21 @@ export class UsersService {
     currentUserId: string,
     targetUserId: string,
   ): Promise<boolean> {
-    const cacheKey = `access_${currentUserId}_${targetUserId}`;
-    const cached = await this.cacheManager.get<boolean>(cacheKey);
-    if (cached !== undefined) {
-      return cached;
+    const currentUser = await this.findOne(currentUserId);
+
+    // Admin can access any user
+    if (currentUser.role === UserRole.ADMIN) {
+      return true;
     }
 
-    const currentUser = await this.findOne(currentUserId);
     const targetUser = await this.findOne(targetUserId);
 
+    // Users can always access themselves
+    if (currentUserId === targetUserId) {
+      return true;
+    }
+
     if (!currentUser.structureId || !targetUser.structureId) {
-      await this.cacheManager.set(cacheKey, false, this.CACHE_TTL);
       return false;
     }
 
@@ -180,24 +159,19 @@ export class UsersService {
         currentUser.structureId,
       );
 
-    const hasAccess = accessibleStructures.some(
+    return accessibleStructures.some(
       (structure) => structure.id === targetUser.structureId,
     );
-
-    await this.cacheManager.set(cacheKey, hasAccess, this.CACHE_TTL);
-    return hasAccess;
   }
 
   private async clearUserCaches(userId: string): Promise<void> {
     const user = await this.usersRepository.findOne({
       where: { id: userId },
-      relations: ['permissions'],
     });
     if (user) {
       await Promise.all([
         this.cacheManager.del(`user_${userId}`),
         this.cacheManager.del(`user_email_${user.email}`),
-        this.cacheManager.del(`users_accessible_${userId}`),
       ]);
     }
   }

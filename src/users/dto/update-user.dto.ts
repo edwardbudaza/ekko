@@ -4,10 +4,13 @@ import {
   MinLength,
   IsOptional,
   IsEnum,
+  IsUUID,
 } from 'class-validator';
 import { UserRole } from '../enums/user-role.enum';
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateUserDto } from './create-user.dto';
 
-export class UpdateUserDto {
+export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
   @IsEmail()
   email?: string;
@@ -28,4 +31,8 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEnum(UserRole)
   role?: UserRole;
+
+  @IsOptional()
+  @IsUUID()
+  structureId?: string;
 }

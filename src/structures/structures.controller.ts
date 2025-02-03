@@ -8,6 +8,7 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,10 +18,12 @@ import {
 } from '@nestjs/swagger';
 import { StructuresService } from './structures.service';
 import { Structure } from './entities/structure.entity';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('Structures')
 @ApiBearerAuth()
 @Controller('structures')
+@UseGuards(JwtAuthGuard)
 export class StructuresController {
   constructor(private readonly structuresService: StructuresService) {}
 

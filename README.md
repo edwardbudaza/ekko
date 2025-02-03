@@ -71,6 +71,60 @@ npm run migration:run
 npm run start:dev
 ```
 
+## Using the API with Swagger
+
+### Accessing Swagger Documentation
+
+1. After starting the application, open your browser and navigate to:
+   ```
+   http://localhost:3000/api
+   ```
+
+### Authentication Steps
+
+1. **Register Initial Admin User**
+
+   - Expand the `Auth` section in Swagger
+   - Find `POST /auth/register`
+   - Click "Try it out"
+   - Use this sample request:
+
+   ```json
+   {
+     "email": "admin@example.com",
+     "password": "Admin123!",
+     "firstName": "Admin",
+     "lastName": "User",
+     "role": "admin"
+   }
+   ```
+
+   - Click "Execute"
+   - Save the `access_token` from the response
+
+2. **Login**
+
+   - Find `POST /auth/login`
+   - Click "Try it out"
+   - Enter credentials:
+
+   ```json
+   {
+     "email": "admin@example.com",
+     "password": "Admin123!"
+   }
+   ```
+
+   - Click "Execute"
+   - Copy the `access_token`
+
+3. **Authorize in Swagger**
+   - Click the "Authorize" button at the top
+   - Enter token as: `Bearer your_access_token`
+   - Click "Authorize"
+
+Now you can use all other API endpoints with proper authentication!
+
 ### Service Access
 
 - Application: http://localhost:3000
@@ -229,3 +283,106 @@ REDIS_TTL=3600
 ## License
 
 MIT
+
+## Using the API with Swagger UI
+
+### Accessing Swagger Documentation
+
+1. Start the application using Docker:
+
+```bash
+docker-compose up -d
+```
+
+2. Open your browser and navigate to: http://localhost:3000/api
+
+### Authentication Steps
+
+1. **Register a New User**
+
+   - In Swagger UI, expand the `Auth` section
+   - Find the `POST /auth/register` endpoint
+   - Click "Try it out"
+   - Enter the registration details in the request body:
+
+   ```json
+   {
+     "email": "admin@example.com",
+     "password": "Admin123!",
+     "firstName": "Admin",
+     "lastName": "User",
+     "role": "admin"
+   }
+   ```
+
+   - Click "Execute"
+   - You will receive an access token in the response
+
+2. **Login with Existing User**
+
+   - In the `Auth` section, find `POST /auth/login`
+   - Click "Try it out"
+   - Enter your credentials:
+
+   ```json
+   {
+     "email": "admin@example.com",
+     "password": "Admin123!"
+   }
+   ```
+
+   - Click "Execute"
+   - Copy the `access_token` from the response
+
+3. **Using the Access Token**
+   - At the top of the Swagger UI, click the "Authorize" button
+   - In the authorization popup, enter your token in the format: `Bearer your_token_here`
+   - Click "Authorize"
+   - All subsequent API requests will include your authentication token
+
+### Managing Users
+
+After authentication, you can:
+
+1. **Create New Users** (Admin/National role required)
+
+   - Expand the `Users` section
+   - Use `POST /users` endpoint
+   - Sample request body:
+
+   ```json
+   {
+     "email": "user@example.com",
+     "password": "User123!",
+     "firstName": "Regular",
+     "lastName": "User",
+     "role": "city",
+     "structureId": "uuid_of_structure"
+   }
+   ```
+
+2. **View Users**
+
+   - Use `GET /users` to list all accessible users
+   - Use `GET /users/{id}` to view specific user details
+
+3. **Update Users**
+
+   - Use `PUT /users/{id}` to update user information
+   - You can only update users within your structure hierarchy
+
+4. **Delete Users** (Admin/National role required)
+   - Use `DELETE /users/{id}` to remove a user
+
+### Common Issues
+
+1. **Authentication Errors**
+
+   - Ensure password meets minimum requirements (at least 6 characters)
+   - Check that email format is valid
+   - Verify you're using the correct token format in authorization
+
+2. **Permission Errors**
+   - Verify you have the required role for the operation
+   - Check that you have access to the target structure
+   - Ensure your token hasn't expired

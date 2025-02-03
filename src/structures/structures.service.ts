@@ -28,9 +28,56 @@ export class StructuresService {
       return cachedStructures;
     }
 
-    const structures = await this.structuresRepository.findTrees();
-    await this.cacheManager.set('all_structures', structures);
-    return structures;
+    // Get all structures
+    const structures = await this.structuresRepository.find({
+      relations: ['children', 'parent'],
+      order: {
+        level: 'ASC',
+      },
+    });
+
+    // Build the tree structure
+    const structureMap = new Map<string, Structure>();
+    const rootStructures: Structure[] = [];
+
+    // First pass: Create a map of all structures
+    structures.forEach((structure) => {
+      structureMap.set(structure.id, {
+        ...structure,
+        children: [],
+      });
+    });
+
+    // Second pass: Build the tree
+    structures.forEach((structure) => {
+      const currentStructure = structureMap.get(structure.id);
+      if (structure.parentId) {
+        const parent = structureMap.get(structure.parentId);
+        if (parent) {
+          parent.children = parent.children || [];
+          parent.children.push(currentStructure);
+        }
+      } else {
+        rootStructures.push(currentStructure);
+      }
+    });
+
+    await this.cacheManager.set('all_structures', rootStructures);
+    return rootStructures;
+  }
+
+  private async loadChildren(structure: Structure): Promise<void> {
+    const children = await this.structuresRepository.find({
+      relations: ['children'],
+      where: { parentId: structure.id },
+    });
+
+    if (children.length > 0) {
+      structure.children = children;
+      for (const child of children) {
+        await this.loadChildren(child);
+      }
+    }
   }
 
   async findOne(id: string): Promise<Structure> {
@@ -42,7 +89,9 @@ export class StructuresService {
 
     const structure = await this.structuresRepository.findOne({
       where: { id },
+      relations: ['children', 'parent'],
     });
+
     if (!structure) {
       throw new NotFoundException(`Structure with ID "${id}" not found`);
     }

@@ -9,6 +9,7 @@ COPY package*.json ./
 
 # Install dependencies
 RUN npm ci
+RUN npm install keyv@4.5.4
 
 # Copy source code
 COPY . .
@@ -31,6 +32,7 @@ ENV NODE_ENV=production
 # Copy package files and install production dependencies
 COPY package*.json ./
 RUN npm ci --only=production
+RUN npm install keyv@4.5.4
 
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
