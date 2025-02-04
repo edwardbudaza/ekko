@@ -1,5 +1,13 @@
 # Building a Hierarchical RBAC System with NestJS - Tutorial
 
+This project was created for a coding challenge at ekko.earth, and
+I had to do planning before impementation. Here are some diagrams that were
+part of the planning phase:
+
+- ERD - [Link](https://www.mermaidchart.com/raw/5ed445e8-e490-491a-8588-81448949c224?theme=light&version=v0.1&format=svg)
+- Permision Flow - [Link](https://www.mermaidchart.com/raw/70adbcaa-e0be-41a8-8bf6-f22720c0e1f1?theme=light&version=v0.1&format=svg)
+- Arhcitecture - [Link](https://www.mermaidchart.com/raw/0c4507f2-485a-4641-bd5e-871bb5297c0a?theme=light&version=v0.1&format=svg)
+
 ## Initial Setup
 
 1. Create a new NestJS project:
@@ -45,7 +53,7 @@ src/
 ├── users/               # User management
 ├── structures/          # Organizational structure
 ├── health/             # Health monitoring
-├── common/             # Shared utilities
+├── permissions/        # Role permisions
 └── config/             # Configuration
 ```
 
@@ -148,10 +156,10 @@ export class StructuresService {
 Custom decorators for role checks:
 
 ```typescript
-// common/decorators/roles.decorator.ts
+// auth/decorators/roles.decorator.ts
 export const Roles = (...roles: Role[]) => SetMetadata('roles', roles);
 
-// common/guards/roles.guard.ts
+// auth/guards/roles.guard.ts
 @Injectable()
 export class RolesGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -180,14 +188,14 @@ export class UsersService {
 
 ```dockerfile
 # Multi-stage build for optimization
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM node:18-alpine
+FROM node:20-alpine
 RUN apk add --no-cache curl
 WORKDIR /app
 COPY --from=builder /app/dist ./dist

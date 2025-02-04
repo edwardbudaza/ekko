@@ -4,7 +4,7 @@
 
 A NestJS application implementing hierarchical role-based permission management, allowing groups of users to access other users' information based on their roles and permissions within the organization.
 
-For a detailed step-by-step guide on how to build this project from scratch, see our [Tutorial](docs/TUTORIAL.md).
+For a detailed step-by-step guide on how to build this project from scratch, see our [Tutorial](/TUTORIAL.md).
 
 ## Architecture Decisions
 
@@ -16,7 +16,6 @@ For a detailed step-by-step guide on how to build this project from scratch, see
 - **Caching**: Redis with @nestjs/cache-manager
 - **API Style**: REST with Swagger/OpenAPI
 - **Container**: Docker with docker-compose
-- **Monitoring**: Prometheus metrics for cache and performance
 
 ### Key Design Patterns
 
@@ -236,7 +235,6 @@ The application includes comprehensive health monitoring:
 ### Endpoints
 
 - `GET /health`: Returns the overall health status
-- `GET /metrics`: Returns Prometheus metrics
 
 ### Monitored Services
 
